@@ -21,9 +21,7 @@ def is_shortened_link(token, url):
     response_data = response.json()
 
     if 'error' in response_data:
-        if response_data['error']['error_code']:
-            return False
-        raise Exception(f"API Error: {response_data['error']['error_msg']}")
+        return False
     return True
 
 
@@ -37,8 +35,6 @@ def shorten_link(token, url):
     response = requests.get('https://api.vk.ru/method/utils.getShortLink', params=payload)
     response.raise_for_status()
     response_data = response.json()
-    if 'error' in response_data:
-        raise Exception(f"API Error: {response_data['error']['error_msg']}")
     short_link = response_data['response']['short_url']
     return short_link
 
@@ -56,8 +52,6 @@ def count_clicks(token, short_link):
     response = requests.get('https://api.vk.ru/method/utils.getLinkStats', params=payload)
     response.raise_for_status()
     response_data = response.json()
-    if 'error' in response_data:
-        raise Exception(f"API Error: {response_data['error']['error_msg']}")
     clicks_count = response_data['response']['stats'][0]['views']
     return clicks_count
 
@@ -81,8 +75,7 @@ def main():
             print(f"Количество кликов: {clicks_count}")
         else:
             short_link = shorten_link(token, user_input)
-            if short_link:
-                print(f"Сокращённая ссылка: {short_link}")
+            print(f"Сокращённая ссылка: {short_link}")
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
     except Exception as err:
